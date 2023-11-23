@@ -65,9 +65,22 @@
 	z-index: 1;
 	max-height: 200px;
 	overflow-y: auto;
-	border-top: none;
 	text-align: left;
 	width: 100%;
+	top: -1px;
+}
+
+.virtual-scroll-container {
+	position: relative;
+}
+
+.virtual-scroll-item {
+	/* Add your styles for each virtual scrolling item */
+	padding: 4px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	cursor: pointer;
 }
 
 .selectcheckbox-dropdown label {

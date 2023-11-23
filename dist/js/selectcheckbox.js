@@ -10,21 +10,22 @@
 
 		var locale   = options.locale || defaultLocale;
 		var settings = $.extend({
-			items   : [],
-			name    : '',
-			width   : 'auto',
-			height  : 'auto',
-			ajax    : null,
-			icon    : '<i class="fa fa-caret-down"></i>',
-			mapping : {
+			items     : [],
+			name      : '',
+			width     : 'auto',
+			height    : 'auto',
+			ajax      : null,
+			icon      : '<i class="fa fa-caret-down"></i>',
+			mapping   : {
 				label : 'label',
 				value : 'value'
-			}
+			},
+			onChanged : null
 		}, options);
 
 		return this.each(function() {
-			var $this  = $(this);
-			var isOpen = false;
+			var $this = $(this);
+			$this.empty();
 
 			// Create a wrapper div for $label and $dropdown
 			var randomId = generateRandomId();
@@ -44,12 +45,6 @@
 			$wrapper.css('height', settings.height);
 
 			if (settings.ajax) {
-				// Fetch data via Ajax
-				settings.ajax.processResults = settings.ajax.processResults || function(data) {
-					return {
-						results : data.items
-					};
-				};
 
 				$.ajax({
 					url      : settings.ajax.url,
@@ -57,7 +52,7 @@
 					data     : settings.ajax.data,
 					dataType : 'json',
 					success  : function(response) {
-						settings.items = settings.ajax.processResults(response);
+						settings.items = response;
 						populateDropdown();
 					},
 					error    : function(error) {
@@ -69,34 +64,46 @@
 			}
 
 			function populateDropdown() {
-				$.each(settings.items, function(index, item) {
-					var label = typeof settings.mapping.label === 'function' ? settings.mapping.label(item, settings.mapping.label) : item[settings.mapping.label];
-					var $item = $(`<label><input type="checkbox" name="${settings.name}[]" value="${item[settings.mapping.value]}">${label}</label>`);
-					$dropdown.append($item);
-				});
+				if (settings.items && settings.items.length > 0) {
+					$.each(settings.items, function(index, item) {
+						var label = item[settings.mapping.label];
+						if (typeof settings.mapping.label === 'function') {
+							label = settings.mapping.label(item);
+						}
+
+						var $item = $(`<label title="${label}"><input type="checkbox" name="${settings.name}[]" value="${item[settings.mapping.value]}">${label}</label>`);
+						$dropdown.append($item);
+					});
+				}
+
 
 				$dropdown.prepend($selectAll);
 
 				// Toggle dropdown on label click
 				$wrapper.on('click', function(e) {
 					e.stopPropagation();
-					toggleDropdown();
+					$dropdown.toggle();
+					hideOtherDropdowns();
 				});
 
 				// Close dropdown on outside click
 				$(document).on('click', function() {
-					hideDropdown();
+					$dropdown.hide();
 				});
 
 				// Prevent dropdown from closing when clicking on it
 				$dropdown.on('click', function(e) {
 					e.stopPropagation();
+					hideOtherDropdowns();
 				});
 
 				// Handle checkbox changes
 				$dropdown.find('input[type="checkbox"]:not(.select-all)').on('change', function() {
 					updateLabel();
 					detectSelectAll();
+					if (typeof settings.onChanged === 'function') {
+						settings.onChanged(getSelectedValues());
+					}
 				});
 
 				// Handle "Select All" checkbox
@@ -104,8 +111,10 @@
 					var isChecked = $(this).prop('checked');
 					$dropdown.find('input[type="checkbox"]').prop('checked', isChecked);
 					updateLabel();
+					if (typeof settings.onChanged === 'function') {
+						settings.onChanged(getSelectedValues());
+					}
 				});
-
 				detectSelectAll();
 			}
 
@@ -134,30 +143,22 @@
 				}
 			}
 
-			function toggleDropdown() {
-				isOpen ? hideDropdown() : showDropdown();
-			}
-
-			function showDropdown() {
-				hideOtherDropdowns();
-				$dropdown.show();
-				isOpen = true;
-			}
-
-			function hideDropdown() {
-				$dropdown.hide();
-				isOpen = false;
-			}
-
 			function hideOtherDropdowns() {
 				if (openSelectCheckbox && openSelectCheckbox !== $wrapper) {
 					openSelectCheckbox.find('.selectcheckbox-dropdown').hide();
+
 				}
 				openSelectCheckbox = $wrapper;
 			}
 
 			function generateRandomId() {
 				return Math.random().toString(16).substr(2, 8);
+			}
+
+			function getSelectedValues() {
+				return $dropdown.find('input[type="checkbox"]:checked:not(.select-all)').map(function() {
+					return $(this).val();
+				}).get();
 			}
 		});
 	};

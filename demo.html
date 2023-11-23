@@ -24,7 +24,7 @@
 				{value : 2, label : 'Option 2'},
 				{value : 3, label : 'Option 3123123123123123123'},
 				{value : 3, label : 'Option 3123123123123123123'},
-				{value : 3, label : 'Option 3123123123123123123'}, {value : 3, name : 'media_id', label : 'Option 3123123123123123123'},
+				{value : 3, label : 'Option 3123123123123123123'},
 				{value : 3, label : 'Option 3123123123123123123'},
 				{value : 3, label : 'Option 3123123123123123123'},
 
@@ -45,12 +45,26 @@
 			{value : 2, label : 'Option 2'},
 			{value : 3, label : 'Option 3123123123123123123'},
 			{value : 3, label : 'Option 3123123123123123123'},
-			{value : 3, label : 'Option 3123123123123123123'}, {value : 3, name : 'media_id', label : 'Option 3123123123123123123'},
+			{value : 3, label : 'Option 3123123123123123123'},
 			{value : 3, label : 'Option 3123123123123123123'},
 			{value : 3, label : 'Option 3123123123123123123'},
 
-			// Add more items as needed
 		];
+
+		function generateRandomString(length) {
+			var result     = '';
+			var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+			for (var i = 0; i < length; i++) {
+				result += characters.charAt(Math.floor(Math.random() * characters.length));
+			}
+			return result;
+		}
+
+		for (var i = 0; i < 10000; i++) {
+			var randomValue = Math.floor(Math.random() * 1000000) + 1;
+			var randomLabel = 'Option ' + generateRandomString(10);
+			list.push({value : randomValue, label : randomLabel});
+		}
 
 
 		$('#selectcheck2').selectcheckbox({
