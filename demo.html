@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Select Checkbox</title>
+    <link rel="stylesheet" href="dist/css/selectcheckbox.css">
+<body>
+<h2>Custom Select Checkbox</h2>
+<div style="display: flex;gap: 10px;">
+    <div id="selectcheck1"></div>
+    <div id="selectcheck2"></div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="dist/js/selectcheckbox.js"></script>
+<script>
+	// Example usage
+	$(document).ready(function() {
+		$('#selectcheck1').selectcheckbox({
+			items  : [
+				{value : 1, label : 'Option 1'},
+				{value : 2, label : 'Option 2'},
+				{value : 3, label : 'Option 3123123123123123123'},
+				{value : 3, label : 'Option 3123123123123123123'},
+				{value : 3, label : 'Option 3123123123123123123'}, {value : 3, name : 'media_id', label : 'Option 3123123123123123123'},
+				{value : 3, label : 'Option 3123123123123123123'},
+				{value : 3, label : 'Option 3123123123123123123'},
+
+				// Add more items as needed
+			],
+			name   : "input_name1",
+			width  : "200px",
+			height : "30px",
+			locale : {
+				"title"         : "Select1",
+				"selectedTitle" : "Selected",
+				"AllSelect"     : "Checked All"
+			},
+		});
+
+		var list = [
+			{value : 1, label : 'Option 1'},
+			{value : 2, label : 'Option 2'},
+			{value : 3, label : 'Option 3123123123123123123'},
+			{value : 3, label : 'Option 3123123123123123123'},
+			{value : 3, label : 'Option 3123123123123123123'}, {value : 3, name : 'media_id', label : 'Option 3123123123123123123'},
+			{value : 3, label : 'Option 3123123123123123123'},
+			{value : 3, label : 'Option 3123123123123123123'},
+
+			// Add more items as needed
+		];
+
+
+		$('#selectcheck2').selectcheckbox({
+			items   : list,
+			width   : "200px",
+			height  : "30px",
+			name    : "input_name2",
+			mapping : {
+				value : 'creative_id',
+				label : function(item) {
+					return `[${item.value}]${item.label}`;
+				}
+			},
+			locale  : {
+				"title"         : "Select2",
+				"selectedTitle" : "Selected",
+				"AllSelect"     : "Checked All"
+			},
+		});
+	});
+
+</script>
+
+</body>
+</html>
